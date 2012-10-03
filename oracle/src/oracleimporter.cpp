@@ -263,11 +263,18 @@ void OracleImporter::downloadNextFile()
 		QUrl url(urlString);
 		http->setHost(url.host(), QHttp::ConnectionModeHttp, url.port() == -1 ? 0 : url.port());
 		QString path = QUrl::toPercentEncoding(urlString.mid(url.host().size() + 7).replace(' ', '+'), "?!$&'()*+,;=:@/");
-		
+
+		//setting header english
+		QHttpRequestHeader header;
+		header.setValue("Accept-Language", "en-us,en;q=0.5");
+		header.setValue("set-cookie: CardDatabaseSettings=0=1&1=28&2=0&14=1&3=13&4=0&5=1&6=15&7=0&8=1&9=1&10=17&11=7&12=8&15=1&16=0&13=");
+
 		buffer->close();
 		buffer->setData(QByteArray());
 		buffer->open(QIODevice::ReadWrite | QIODevice::Text);
-		reqId = http->get(path, buffer);
+		//reqId = http->get(path, buffer);
+		reqId = http->request(header, buffer);
+		
 	} else {
 		QFile file(dataDir + "/" + urlString);
 		file.open(QIODevice::ReadOnly | QIODevice::Text);
